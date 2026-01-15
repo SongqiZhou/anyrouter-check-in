@@ -3,7 +3,7 @@
 AnyRouter.top 自动签到脚本
 (已优化：先签到后查余额 + GitHub Action 可视化表格 + 强制通知)
 """
-
+import random  # <--- 新增这一行
 import asyncio
 import hashlib
 import json
@@ -301,6 +301,19 @@ def write_github_summary(results):
 async def main():
     """主函数"""
     print('[SYSTEM] AnyRouter.top multi-account auto check-in script started (using Playwright)')
+    # === 新增：随机延迟逻辑 (模拟真人) ===
+    # 在 10秒 到 7200秒 (2小时) 之间随机生成一个等待时间
+    # 如果你想间隔是 6, 8, 10, 12，建议 cron 设为每 6 小时，然后这里最大延迟设为 2-4 小时
+    delay_seconds = random.randint(1, 600)  # 这里设的是 1小时内随机，你可以改成 7200 (2小时)
+    
+    # 打印日志让 GitHub Action 知道我们在干什么，防止它以为卡死了
+    print(f'[WAIT] Random delay initiated: Sleeping for {delay_seconds} seconds ({round(delay_seconds/60, 1)} minutes)...')
+    
+    # 开始休眠
+    await asyncio.sleep(delay_seconds)
+    print('[WAIT] Sleep finished, starting check-in process...')
+    # ==================================
+
     print(f'[TIME] Execution time: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
 
     app_config = AppConfig.load_from_env()
